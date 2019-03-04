@@ -7,7 +7,7 @@ using Medidata.ZipkinTracer.Core.Helpers;
 
 namespace Medidata.ZipkinTracer.Core
 {
-    public class ZipkinClient: ITracerClient
+    public class ZipkinClient : ITracerClient
     {
         internal SpanCollector spanCollector;
         internal SpanTracer spanTracer;
@@ -60,7 +60,7 @@ namespace Medidata.ZipkinTracer.Core
                     spanCollector,
                     new ServiceEndpoint(),
                     zipkinConfig.NotToBeDisplayedDomainList,
-                    zipkinConfig.Domain(context.Request));
+                    zipkinConfig.Domain(context.Request), ZipkinConfig.SpecifyServiceName);
 
                 TraceProvider = traceProvider;
             }
@@ -83,7 +83,7 @@ namespace Medidata.ZipkinTracer.Core
                     trace.TraceId,
                     trace.ParentSpanId,
                     trace.SpanId,
-                    remoteUri);
+                    remoteUri, specifyServiceName: "");
             }
             catch (Exception ex)
             {

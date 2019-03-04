@@ -18,6 +18,8 @@ namespace Medidata.ZipkinTracer.Core
         public IList<string> NotToBeDisplayedDomainList { get; set; } = new List<string>();
         public bool Create128BitTraceId { get; set; }
 
+        public string SpecifyServiceName { get; set; }
+
         public void Validate()
         {
             if (ZipkinBaseUri == null)
@@ -63,7 +65,7 @@ namespace Medidata.ZipkinTracer.Core
             if (TryParseSampledFlagToBool(sampledFlag, out result)) return result;
 
             if (IsInDontSampleList(requestPath)) return false;
-            
+
             return random.NextDouble() <= SampleRate;
         }
 

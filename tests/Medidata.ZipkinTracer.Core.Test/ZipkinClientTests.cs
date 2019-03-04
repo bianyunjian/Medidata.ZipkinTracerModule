@@ -106,7 +106,7 @@ namespace Medidata.ZipkinTracer.Core.Test
             Assert.IsNotNull(zipkinClient.spanTracer);
         }
 
-         [TestMethod]
+        [TestMethod]
         public void Shutdown_StopCollector()
         {
             var zipkinClient = (ZipkinClient)SetupZipkinClient();
@@ -259,7 +259,8 @@ namespace Medidata.ZipkinTracer.Core.Test
                     Arg<string>.Is.Equal(traceProvider.TraceId),
                     Arg<string>.Is.Equal(traceProvider.ParentSpanId),
                     Arg<string>.Is.Equal(traceProvider.SpanId),
-                    Arg<Uri>.Is.Anything)).Return(expectedSpan);
+                    Arg<Uri>.Is.Anything,
+                    Arg<string>.Is.Anything)).Return(expectedSpan);
 
             var result = tracerClient.StartClientTrace(new Uri("https://" + clientServiceName + ".xyz.net:8000" + uriAbsolutePath), methodName, traceProvider);
 
@@ -285,7 +286,8 @@ namespace Medidata.ZipkinTracer.Core.Test
                     Arg<string>.Is.Equal(traceProvider.TraceId),
                     Arg<string>.Is.Equal(traceProvider.ParentSpanId),
                     Arg<string>.Is.Equal(traceProvider.SpanId),
-                    Arg<Uri>.Is.Anything)).Return(expectedSpan);
+                    Arg<Uri>.Is.Anything,
+                    Arg<string>.Is.Anything)).Return(expectedSpan);
 
             var result = tracerClient.StartClientTrace(new Uri("https://" + clientServiceName + ".xyz.net:8000" + uriAbsolutePath), methodName, traceProvider);
 
@@ -313,7 +315,8 @@ namespace Medidata.ZipkinTracer.Core.Test
                     Arg<string>.Is.Equal(traceProvider.TraceId),
                     Arg<string>.Is.Equal(traceProvider.ParentSpanId),
                     Arg<string>.Is.Equal(traceProvider.SpanId),
-                    Arg<Uri>.Is.Anything)).Return(expectedSpan);
+                    Arg<Uri>.Is.Anything,
+                    Arg<string>.Is.Anything)).Return(expectedSpan);
 
             var result = tracerClient.StartClientTrace(new Uri("https://" + clientServiceName + ".xyz.net:8000" + uriAbsolutePath), methodName, traceProvider);
 
@@ -338,7 +341,8 @@ namespace Medidata.ZipkinTracer.Core.Test
                     Arg<string>.Is.Anything,
                     Arg<string>.Is.Anything,
                     Arg<string>.Is.Anything,
-                    Arg<Uri>.Is.Anything)).Throw(new Exception());
+                    Arg<Uri>.Is.Anything,
+                    Arg<string>.Is.Anything)).Throw(new Exception());
 
             var result = tracerClient.StartClientTrace(new Uri("https://" + clientServiceName + ".xyz.net:8000" + uriAbsolutePath), methodName, traceProvider);
 
@@ -577,7 +581,8 @@ namespace Medidata.ZipkinTracer.Core.Test
                     spanCollectorStub,
                     MockRepository.GenerateStub<ServiceEndpoint>(),
                     new List<string>(),
-                    new Uri("http://server.com")
+                    new Uri("http://server.com"),
+                    ""
                 );
         }
 

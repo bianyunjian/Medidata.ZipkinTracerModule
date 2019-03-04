@@ -13,7 +13,7 @@ namespace Medidata.ZipkinTracer.Core
         private ServiceEndpoint zipkinEndpoint;
         private IEnumerable<string> zipkinNotToBeDisplayedDomainList;
 
-        public SpanTracer(SpanCollector spanCollector, ServiceEndpoint zipkinEndpoint, IEnumerable<string> zipkinNotToBeDisplayedDomainList, Uri domain)
+        public SpanTracer(SpanCollector spanCollector, ServiceEndpoint zipkinEndpoint, IEnumerable<string> zipkinNotToBeDisplayedDomainList, Uri domain, String specifyServiceName = "")
         {
             if (spanCollector == null) throw new ArgumentNullException(nameof(spanCollector));
             if (zipkinEndpoint == null) throw new ArgumentNullException(nameof(zipkinEndpoint));
@@ -24,7 +24,7 @@ namespace Medidata.ZipkinTracer.Core
             this.zipkinEndpoint = zipkinEndpoint;
             this.zipkinNotToBeDisplayedDomainList = zipkinNotToBeDisplayedDomainList;
             var domainHost = domain.Host;
-            this.serviceName = CleanServiceName(domainHost);
+            this.serviceName = CleanServiceName(domainHost, specifyServiceName);
             this.servicePort = (ushort)domain.Port;
         }
 
@@ -69,11 +69,11 @@ namespace Medidata.ZipkinTracer.Core
             spanCollector.Collect(span);
         }
 
-        public virtual Span SendClientSpan(string spanName, string traceId, string parentSpanId, string spanId, Uri remoteUri)
+        public virtual Span SendClientSpan(string spanName, string traceId, string parentSpanId, string spanId, Uri remoteUri, String specifyServiceName = "")
         {
             var newSpan = CreateNewSpan(spanName, traceId, parentSpanId, spanId);
             var serviceEndpoint = zipkinEndpoint.GetLocalEndpoint(serviceName, (ushort)remoteUri.Port);
-            var clientServiceName = CleanServiceName(remoteUri.Host);
+            var clientServiceName = CleanServiceName(remoteUri.Host, specifyServiceName);
 
             var annotation = new Annotation
             {
@@ -88,7 +88,7 @@ namespace Medidata.ZipkinTracer.Core
             return newSpan;
         }
 
-        private string CleanServiceName(string host)
+        private string CleanServiceName(string host, string specifyServiceName)
         {
             foreach (var domain in zipkinNotToBeDisplayedDomainList)
             {
@@ -97,7 +97,10 @@ namespace Medidata.ZipkinTracer.Core
                     return host.Replace(domain, string.Empty);
                 }
             }
-
+            if (string.IsNullOrEmpty(specifyServiceName) == false)
+            {
+                return specifyServiceName;
+            }
             return host;
         }
 
@@ -139,7 +142,7 @@ namespace Medidata.ZipkinTracer.Core
 
         public void RecordBinary<T>(Span span, string key, T value)
         {
-             if (span == null)
+            if (span == null)
                 throw new ArgumentNullException(nameof(span), "In order to record a binary annotation, the span must be not null.");
 
             span.Annotations.Add(new BinaryAnnotation()
