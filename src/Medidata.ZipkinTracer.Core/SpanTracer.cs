@@ -99,7 +99,7 @@ namespace Medidata.ZipkinTracer.Core
             }
             if (string.IsNullOrEmpty(specifyServiceName) == false)
             {
-                return specifyServiceName;
+                return host + "-" + specifyServiceName;
             }
             return host;
         }
